@@ -4,6 +4,7 @@ import numpy as np
 from ydata_profiling import ProfileReport
 import missingno as msno
 import matplotlib.pyplot as plt
+import streamlit_extras
 
 def Nettoyage():
 
@@ -52,7 +53,8 @@ def Nettoyage():
                     st.warning('Veuillez sélectionner au moins une colonne à supprimer.')
 
                 # Bouton pour revenir en arrière
-            if st.button('Revenir en arrière'):
+            undo_columns_button_id = 'undo_columns_button'
+            if st.button('Revenir en arrière', key=undo_columns_button_id):
                 data = pd.DataFrame(data)
                 st.success('Opération annulée. Dataframe réinitialisé.')
 
@@ -62,13 +64,46 @@ def Nettoyage():
         # Imputation / Remplacement des NaN
         with st.expander('Imputation et remplacement des valeurs manquantes'):
             st.markdown('## Imputation des valeurs manquantes')
+            st.markdown('### Information des valeurs manquantes :')
             missing_values = data.isnull().sum()
             st.table(missing_values.reset_index().rename(columns={0: 'Nombre de valeurs manquantes'}).style.highlight_null()) # Affichage des Nan
-            st.set_option('deprecation.showPyplotGlobalUse', False)
+            st.set_option('deprecation.showPyplotGlobalUse', False) 
             msno.matrix(data)
-            # fig, ax = plt.subplots()
-            # ax.scatter([1, 2, 3], [1, 2, 3])
             st.pyplot()
+
+            st.markdown('### Remplacer / supprimer des valeurs manquantes :')
+            selected_column = st.multiselect('Sélectionnez une colonne:', data.select_dtypes('number').columns)
+            replace_button_id_median = f'replace_button_median_{selected_column}'
+            return_button_id = f'return_button_{selected_column}'
+            replace_button_id_dropna = f'replace_button_dropna_{selected_column}'
+            
+            try :
+                if st.button('Remplacer les valeurs manquantes par la médiane', key=replace_button_id_median):
+                    median_value = data[selected_column].median()
+                    data[selected_column].fillna(median_value, inplace=True)
+                    st.success(f'Valeurs manquantes dans la colonne "{selected_column}" remplacées avec succès.')
+            except:
+                st.text('Aucune valeur manquante à remplacer.')
+
+            if st.button('Supprimer les valeurs manquantes restantes',key=replace_button_id_dropna):
+                data.dropna(inplace=True)
+                st.success('Valeurs manquantes restantes supprimées avec succès.')
+
+            if st.button('Revenir en arrière', key=return_button_id):
+                data = pd.DataFrame(data)
+                st.success('Opération annulée. Dataframe réinitialisé.')
+
+            st.subheader('Dataframe mis à jour')
+            st.write(data)
+
+            missing_values = data.isnull().sum()
+            st.table(missing_values.reset_index().rename(columns={0: 'Nombre de valeurs manquantes'}).style.highlight_null())
+
+        # Transformation des données
+        with st.expander('Transformation des données'):
+            st.markdown('## Transformation des données')
+            
+
 
 
     else:
