@@ -5,6 +5,9 @@ from ydata_profiling import ProfileReport
 import missingno as msno
 import matplotlib.pyplot as plt
 import streamlit_extras
+import Utils.Utils as u
+
+u.init_page("Nettoyage")
 
 def Nettoyage():
 
@@ -61,7 +64,7 @@ def Nettoyage():
             st.subheader('Dataframe mis à jour')
             st.write(data)
 
-        # Imputation / Remplacement des NaN
+       # Imputation / Remplacement des NaN
         with st.expander('Imputation et remplacement des valeurs manquantes'):
             st.markdown('## Imputation des valeurs manquantes')
             st.markdown('### Information des valeurs manquantes :')
@@ -74,16 +77,25 @@ def Nettoyage():
             st.markdown('### Remplacer / supprimer des valeurs manquantes :')
             selected_column = st.multiselect('Sélectionnez une colonne:', data.select_dtypes('number').columns)
             replace_button_id_median = f'replace_button_median_{selected_column}'
+            replace_button_id_specific = f'replace_button_specific_{selected_column}'
             return_button_id = f'return_button_{selected_column}'
             replace_button_id_dropna = f'replace_button_dropna_{selected_column}'
-            
-            try :
-                if st.button('Remplacer les valeurs manquantes par la médiane', key=replace_button_id_median):
-                    median_value = data[selected_column].median()
-                    data[selected_column].fillna(median_value, inplace=True)
-                    st.success(f'Valeurs manquantes dans la colonne "{selected_column}" remplacées avec succès.')
-            except:
-                st.text('Aucune valeur manquante à remplacer.')
+
+            old_value = st.text_input('Valeur à remplacer:', type='default')
+            new_value = st.text_input('Nouvelle valeur:', type='default')
+
+            if st.button(f'Remplacer les valeurs ({selected_column})', key=replace_button_id_specific):
+                try:
+                    old_value = eval(old_value) 
+                    data[selected_column].replace(old_value, new_value, inplace=True)
+                    st.success(f'Valeurs "{old_value}" dans la colonne "{selected_column}" remplacées par "{new_value}" avec succès.')
+                except:
+                    st.error('Erreur : Veuillez entrer une valeur valide.')
+
+            if st.button('Remplacer les valeurs manquantes par la médiane', key=replace_button_id_median):
+                median_value = data[selected_column].median()
+                data[selected_column].fillna(median_value, inplace=True)
+                st.success(f'Valeurs manquantes dans la colonne "{selected_column}" remplacées avec succès.')
 
             if st.button('Supprimer les valeurs manquantes restantes',key=replace_button_id_dropna):
                 data.dropna(inplace=True)
@@ -96,13 +108,16 @@ def Nettoyage():
             st.subheader('Dataframe mis à jour')
             st.write(data)
 
+
             missing_values = data.isnull().sum()
             st.table(missing_values.reset_index().rename(columns={0: 'Nombre de valeurs manquantes'}).style.highlight_null())
 
         # Transformation des données
         with st.expander('Transformation des données'):
             st.markdown('## Transformation des données')
-            
+
+
+
 
 
 
