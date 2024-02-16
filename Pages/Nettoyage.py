@@ -75,7 +75,7 @@ def Nettoyage():
             st.pyplot()
 
             st.markdown('### Remplacer / supprimer des valeurs manquantes :')
-            selected_column = st.multiselect('Sélectionnez une colonne:', data.select_dtypes('number').columns)
+            selected_column = st.selectbox('Sélectionnez une colonne:', data.select_dtypes('number').columns)
             replace_button_id_median = f'replace_button_median_{selected_column}'
             replace_button_id_specific = f'replace_button_specific_{selected_column}'
             return_button_id = f'return_button_{selected_column}'
