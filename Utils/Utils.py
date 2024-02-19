@@ -11,6 +11,9 @@ def init_page(page):
     if("data" in st.session_state and "nom_dataset" in st.session_state):
         nom_dataset = st.session_state["nom_dataset"]
         st.text("Vous travaillez sur le dataset " + str(nom_dataset) )
+    if("model" in st.session_state):
+        st.text("Vous avez un modèle en cours d'utilisation")
+
 
 def reset_select():
     st.session_state.selection1 = ""
@@ -56,8 +59,8 @@ def bandeau(page):
         if(choix_col != ""):
             choix = choix_col
     with col5:
-        choix_col = st.selectbox("Output",("","Predict", "Download Model"),key="selection5")
-        if(page in ("Predict", "Download Model")):
+        choix_col = st.selectbox("Output",("","Predict", "Import/export modèle"),key="selection5")
+        if(page in ("Predict", "Import/export modèle")):
             st.write("""<div class='page_actuelle'/>""", unsafe_allow_html=True)
         if(choix_col != ""):
             choix = choix_col
@@ -69,7 +72,8 @@ def bandeau(page):
             'Import': "File_upload",
             'Export': "Export_Data",
             "Statistiques":"Statistiques_generales",
-            "Nettoyage":"Nettoyage"
+            "Nettoyage":"Nettoyage",
+            "Import/export modèle":"Model_IO"
 
         }
         try:
