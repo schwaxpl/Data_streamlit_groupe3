@@ -64,10 +64,15 @@ def bandeau(page):
 
     if(choix != ""):
         st.session_state.reset_select = True
-        match choix:
-            case "Import":
-                switch_page("File_upload")
-            case "Export":
-                switch_page("Export_Data")
-            case "Statistiques":
-                switch_page("Statistiques_generales")
+
+        MATCH = {
+            'Import': "File_upload",
+            'Export': "Export_Data",
+            "Statistiques":"Statistiques_generales",
+            "Nettoyage":"Nettoyage"
+
+        }
+        try:
+            switch_page(MATCH[choix])
+        except KeyError:
+            st.text("Page " + choix + " non trouvée")
