@@ -53,8 +53,8 @@ def bandeau(page):
             choix = choix_col
 
     with col4:
-        choix_col = st.selectbox("Model Creation",("","Model Training","Model Evaluation","Model Tuning"),key="selection4")
-        if(page in ("Model Training","Model Evaluation","Model Tuning")):
+        choix_col = st.selectbox("Création modèle",("","Entrainement","Model Evaluation","Model Tuning"),key="selection4")
+        if(page in ("Entrainement","Model Evaluation","Model Tuning")):
             st.write("""<div class='page_actuelle'/>""", unsafe_allow_html=True)
         if(choix_col != ""):
             choix = choix_col
@@ -73,7 +73,8 @@ def bandeau(page):
             'Export': "Export_Data",
             "Statistiques":"Statistiques_generales",
             "Nettoyage":"Nettoyage",
-            "Import/export modèle":"Model_IO"
+            "Import/export modèle":"Model_IO",
+            "Entrainement":"Model_training"
 
         }
         try:
