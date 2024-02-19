@@ -78,7 +78,13 @@ with st.expander("Traitement pré configuré ""Vin"" "):
             predictions = nnGrid.predict(features_all_test)
             cm = confusion_matrix(activity_all_test, predictions)
             disp = ConfusionMatrixDisplay(confusion_matrix=cm)
-            st.pyplot(disp.plot())
+            fig, ax = plt.subplots()
+            sns.set_theme(font_scale=1.2)  # Adjust font size
+            sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+            plt.title('Confusion Matrix')
+            st.write(fig)
+            st.session_state["Data"] = data
+            st.session_state["Model"] = nnGrid
     bt_vin2 = st.button("Générer un modèle de regression linéaire",key="vin2")
     if bt_vin2:
         if("data" in st.session_state):
