@@ -1,14 +1,13 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import Pages as p
 from Utils import Utils as u
 
 u.init_page("Export_Data")
 
 if("data" in st.session_state):
     data = st.session_state["data"]
-    @st.cache
+    @st.cache_data
     def convert_df(df):
         return df.to_csv(index=False).encode('utf-8')
 
