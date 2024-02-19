@@ -121,24 +121,37 @@ def Nettoyage():
             st.write(data)
 
             selected_column = st.selectbox('Sélectionnez une colonne:', data.columns)
-            separator_pattern = st.text_input('Motif de séparation (ex: espace, V, -, etc.)', '')
-            transformation_code = st.text_area('Code de transformation (utilisez "x" comme variable pour la valeur courante)', '')
+ 
+            # Widget pour spécifier les motifs dans les valeurs
+            pattern_options = list(set([word.lower() for item in data[selected_column] for word in str(item).split()]))
+            selected_pattern = st.selectbox('Sélectionnez un motif dans les valeurs:', pattern_options)
 
-            def custom_transform(value, separator_pattern, transformation_code):
-                try:
-                    if isinstance(value, (str, int, float)):
-                        value = str(value)
+            # Widget pour choisir ce qui sera gardé avant / après le motif
+            keep_option = st.radio('Choisissez ce qui sera gardé:', ['Avant le motif', 'Après le motif'])
 
-                        transformed_value = eval(transformation_code.replace('x', 'value'))
-                        return transformed_value
-                except:
-                    pass
-                
+            # Widget pour choisir si la transformation sera appliquée à la même colonne ou à une nouvelle colonne
+            apply_to_same_column = st.checkbox('Appliquer la transformation à la même colonne')
+
+            # Widget pour saisir le nom de la nouvelle colonne
+            new_column_name = st.text_input('Nom de la nouvelle colonne (si différent de la colonne d\'origine):', '')
+
+            # Transformation appliqué
+            def custom_transform(value, selected_pattern, keep_option):
+                if isinstance(value, (str, int, float)):
+                    words = str(value).split()
+                    if selected_pattern.lower() in [word.lower() for word in words]:
+                        pattern_index = [word.lower() for word in words].index(selected_pattern.lower())
+                        if keep_option == 'Avant le motif':
+                            return ' '.join(words[:pattern_index])
+                        elif keep_option == 'Après le motif':
+                            return ' '.join(words[pattern_index + 1:])
                 return value
 
-            data[selected_column + '_transformed'] = data[selected_column].apply(custom_transform, args=(separator_pattern, transformation_code))
-
-
+            if apply_to_same_column:
+                data[selected_column] = data[selected_column].apply(custom_transform, args=(selected_pattern, keep_option))
+            else:
+                new_column_name = new_column_name if new_column_name else selected_column + '_transformed'
+                data[new_column_name] = data[selected_column].apply(custom_transform, args=(selected_pattern, keep_option))
 
             st.subheader('Dataframe mis à jour')
             st.write(data)
