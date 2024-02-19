@@ -8,6 +8,7 @@ file = st.file_uploader(label="Mettez votre CSV",type="csv",accept_multiple_file
 
 if file:
     data = pd.read_csv(file)
-    st.text("Coucou, " + str(file) + " uploadé" )
-    st.dataframe(data)
+    st.text("Votre fichier, " + str(file.name) + " a été correctement importé. Voici un apperçu des données :" )
+    st.dataframe(data.head())
     st.session_state["data"] = data
+    st.session_state["nom_dataset"] = str(file.name).split('.')[-2]
