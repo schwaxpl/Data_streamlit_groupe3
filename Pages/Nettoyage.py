@@ -116,8 +116,32 @@ def Nettoyage():
         with st.expander('Transformation des données'):
             st.markdown('## Transformation des données')
 
+            # sur une colonne
+            st.subheader('Dataframe original')
+            st.write(data)
+
+            selected_column = st.selectbox('Sélectionnez une colonne:', data.columns)
+            separator_pattern = st.text_input('Motif de séparation (ex: espace, V, -, etc.)', '')
+            transformation_code = st.text_area('Code de transformation (utilisez "x" comme variable pour la valeur courante)', '')
+
+            def custom_transform(value, separator_pattern, transformation_code):
+                try:
+                    if isinstance(value, (str, int, float)):
+                        value = str(value)
+
+                        transformed_value = eval(transformation_code.replace('x', 'value'))
+                        return transformed_value
+                except:
+                    pass
+                
+                return value
+
+            data[selected_column + '_transformed'] = data[selected_column].apply(custom_transform, args=(separator_pattern, transformation_code))
 
 
+
+            st.subheader('Dataframe mis à jour')
+            st.write(data)
 
 
 
