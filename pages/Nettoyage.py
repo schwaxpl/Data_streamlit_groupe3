@@ -142,16 +142,12 @@ def Nettoyage():
                             return ' '.join(words[pattern_index + 1:])
                 return value
 
-            if st.button('Valider la transformation',key=button_id_motifs):
+            if st.button('Garder les motifs',key=button_id_motifs):
                         if apply_to_same_column:
                             data[selected_column] = data[selected_column].apply(custom_transform, args=(selected_pattern, keep_option))
                         else:
                             new_column_name = new_column_name if new_column_name else selected_column + '_transformed'
                             data[new_column_name] = data[selected_column].apply(custom_transform, args=(selected_pattern, keep_option))
-
-            st.subheader('Dataframe mis à jour')
-            st.dataframe(data)
-            st.session_state["data"] = data
 
             # Remplacer des valeurs
             st.markdown('### Remplacement de valeurs')

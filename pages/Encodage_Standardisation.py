@@ -5,7 +5,7 @@ import missingno as msno
 import matplotlib.pyplot as plt
 import streamlit_extras
 import Utils.Utils as u
-from sklearn.preprocessing import OneHotEncoder,OrdinalEncoder
+from sklearn.preprocessing import OneHotEncoder,OrdinalEncoder,StandardScaler,MinMaxScaler
 
 
 u.init_page("Encodage_Standardisation")
@@ -54,6 +54,29 @@ def Encodage_Standardisation():
                 st.dataframe(data)
                 st.session_state["data"] = data
 
+        # Standardisation des données
+        with st.expander('Standardisation'):
+            st.markdown('## Standardisation des données')
+
+            selected_columns = st.multiselect('Sélectionnez les colonnes à standardiser:', data.select_dtypes(include=['float64', 'int64']).columns)
+
+            # Bouton de standardisation au Z score
+            if selected_columns:
+                if st.button('Standardiser au Z score', key='button_standard_scaler'):
+                    scaler = StandardScaler()
+                    data[selected_columns] = scaler.fit_transform(data[selected_columns])
+                    st.success(f'Colonnes {selected_columns} standardisées avec StandardScaler.')
+
+            # Bouton de standardisation au min/max
+            if selected_columns:
+                if st.button('Appliquer Min-Max Scaling aux colonnes sélectionnées', key='button_min_max_scaler'):
+                    scaler = MinMaxScaler()
+                    data[selected_columns] = scaler.fit_transform(data[selected_columns])
+                    st.success(f'Colonnes {selected_columns} appliquées avec succès Min-Max Scaling.')
+
+            st.subheader('Dataframe mis à jour')
+            st.dataframe(data)
+            st.session_state["data"] = data
 
     else:
         st.text("Bienvenue, allez dans file upload pour charger un CSV")
