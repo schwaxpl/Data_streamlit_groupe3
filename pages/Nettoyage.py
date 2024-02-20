@@ -9,7 +9,6 @@ import Utils.Utils as u
 u.init_page("Nettoyage")
 
 def Nettoyage():
-
     st.title('Nettoyage des données')
 
     if("data" in st.session_state):
@@ -154,8 +153,6 @@ def Nettoyage():
 
             st.subheader('Dataframe mis à jour')
             st.write(data)
-
-
 
     else:
         st.text("Bienvenue, allez dans file upload pour charger un CSV")
