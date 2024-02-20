@@ -80,16 +80,10 @@ def Nettoyage():
             return_button_id = f'return_button_{selected_column}'
             replace_button_id_dropna = f'replace_button_dropna_{selected_column}'
 
-            old_value = st.text_input('Valeur à remplacer:', type='default',key='old_value_drop_replace_nan')
-            new_value = st.text_input('Nouvelle valeur:', type='default',key='new_value_drop_replace_nan')
-
-            if st.button(f'Remplacer les valeurs ({selected_column})', key=replace_button_id_specific):
-                try:
-                    old_value = eval(old_value) 
-                    data[selected_column].replace(old_value, new_value, inplace=True)
-                    st.success(f'Valeurs "{old_value}" dans la colonne "{selected_column}" remplacées par "{new_value}" avec succès.')
-                except:
-                    st.error('Erreur : Veuillez entrer une valeur valide.')
+            replacement_value = st.text_input('Nouvelle valeur de remplacement:', '')
+            if st.button('Remplacer les valeurs manquantes', key='button_replace_nan_id'):
+                data[selected_column].fillna(replacement_value, inplace=True)
+                st.success(f'Valeurs manquantes dans la colonne "{selected_column}" remplacées avec succès.')
 
             if st.button('Remplacer les valeurs manquantes par la médiane', key=replace_button_id_median):
                 median_value = data[selected_column].median()
