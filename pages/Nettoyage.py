@@ -9,7 +9,6 @@ import Utils.Utils as u
 u.init_page("Nettoyage")
 
 def Nettoyage():
-
     st.title('Nettoyage des données')
 
     if("data" in st.session_state):
@@ -22,7 +21,8 @@ def Nettoyage():
 
             if display_option == 'Afficher toutes les colonnes':
                 st.subheader('Dataframe complet')
-                st.write(data)
+                st.dataframe(data)
+                st.session_state["data"] = data
             else:
                 selected_columns = st.multiselect('Sélectionnez les colonnes à afficher', data.columns)
 
@@ -61,7 +61,8 @@ def Nettoyage():
                 st.success('Opération annulée. Dataframe réinitialisé.')
 
             st.subheader('Dataframe mis à jour')
-            st.write(data)
+            st.dataframe(data)
+            st.session_state["data"] = data
 
        # Imputation / Remplacement des NaN
         with st.expander('Imputation et remplacement des valeurs manquantes'):
@@ -105,7 +106,8 @@ def Nettoyage():
                 st.success('Opération annulée. Dataframe réinitialisé.')
 
             st.subheader('Dataframe mis à jour')
-            st.write(data)
+            st.dataframe(data)
+            st.session_state["data"] = data
 
 
             missing_values = data.isnull().sum()
@@ -117,24 +119,17 @@ def Nettoyage():
 
             # sur une colonne
             st.subheader('Dataframe original')
-            st.write(data)
+            st.dataframe(data)
+            st.session_state["data"] = data
 
             selected_column = st.selectbox('Sélectionnez une colonne:', data.columns)
  
-            # Widget pour spécifier les motifs dans les valeurs
             pattern_options = list(set([word.lower() for item in data[selected_column] for word in str(item).split()]))
             selected_pattern = st.selectbox('Sélectionnez un motif dans les valeurs:', pattern_options)
-
-            # Widget pour choisir ce qui sera gardé avant / après le motif
             keep_option = st.radio('Choisissez ce qui sera gardé:', ['Avant le motif', 'Après le motif'])
-
-            # Widget pour choisir si la transformation sera appliquée à la même colonne ou à une nouvelle colonne
             apply_to_same_column = st.checkbox('Appliquer la transformation à la même colonne')
-
-            # Widget pour saisir le nom de la nouvelle colonne
             new_column_name = st.text_input('Nom de la nouvelle colonne (si différent de la colonne d\'origine):', '')
 
-            # Transformation appliqué
             def custom_transform(value, selected_pattern, keep_option):
                 if isinstance(value, (str, int, float)):
                     words = str(value).split()
@@ -153,9 +148,8 @@ def Nettoyage():
                 data[new_column_name] = data[selected_column].apply(custom_transform, args=(selected_pattern, keep_option))
 
             st.subheader('Dataframe mis à jour')
-            st.write(data)
-
-
+            st.dataframe(data)
+            st.session_state["data"] = data
 
     else:
         st.text("Bienvenue, allez dans file upload pour charger un CSV")
