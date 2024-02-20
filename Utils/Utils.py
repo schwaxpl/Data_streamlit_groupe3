@@ -12,7 +12,7 @@ def init_page(page):
         nom_dataset = st.session_state["nom_dataset"]
         st.text("Vous travaillez sur le dataset " + str(nom_dataset) )
     if("model" in st.session_state):
-        st.text("Vous avez un modèle en cours d'utilisation")
+        st.text("Vous avez un modèle de type "+ str(type(st.session_state["model"]).__name__) +" en cours d'utilisation")
 
 
 def reset_select():
