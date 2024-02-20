@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import missingno as msno
-import matplotlib.pyplot as plt
 import streamlit_extras
 import Utils.Utils as u
 
@@ -175,9 +174,6 @@ def Nettoyage():
                 st.subheader('Dataframe mis à jour')
                 st.dataframe(data)
                 st.session_state["data"] = data
-
-
-
 
     else:
         st.text("Bienvenue, allez dans file upload pour charger un CSV")
