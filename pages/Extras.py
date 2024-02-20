@@ -139,6 +139,7 @@ with st.expander("Traitement pré configuré ""Vin"" "):
                 st.write(fig)
                 st.session_state["Data"] = data
                 st.session_state["model"] = clf
+                st.text("Modèle sauvegardé !")
             else:
                 st.text("Vous devez d'abord importer un fichier")
 
