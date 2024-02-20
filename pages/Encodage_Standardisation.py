@@ -69,7 +69,7 @@ def Encodage_Standardisation():
 
             # Bouton de standardisation au min/max
             if selected_columns:
-                if st.button('Appliquer Min-Max Scaling aux colonnes sélectionnées', key='button_min_max_scaler'):
+                if st.button('Standardiser au mininum / maximum', key='button_min_max_scaler'):
                     scaler = MinMaxScaler()
                     data[selected_columns] = scaler.fit_transform(data[selected_columns])
                     st.success(f'Colonnes {selected_columns} appliquées avec succès Min-Max Scaling.')
