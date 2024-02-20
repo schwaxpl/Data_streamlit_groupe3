@@ -5,6 +5,8 @@ import missingno as msno
 import matplotlib.pyplot as plt
 import streamlit_extras
 import Utils.Utils as u
+from sklearn.preprocessing import OneHotEncoder,OrdinalEncoder
+
 
 u.init_page("Encodage_Standardisation")
 
@@ -17,30 +19,40 @@ def Encodage_Standardisation():
 
         # Encodage des données
         with st.expander('Encodage'):
-                st.markdown('## Encodage')
-                st.markdown('### Remplacement de valeurs')
-
-                selected_column = st.selectbox('Sélectionnez une colonne:', data.columns)
+                st.markdown('## Encodage des données')
+                
+                selected_column = st.selectbox('Sélectionnez une colonne:', data.columns, key='key_1_for_selectbox')
 
                 unique_values = data[selected_column].unique()
                 st.write(f"Valeurs uniques dans la colonne '{selected_column}':")
                 st.write(unique_values)
 
-                value_to_replace = st.text_input('Valeur à remplacer:', '')
-                new_value = st.text_input('Nouvelle valeur:', '')
+                # Bouton pour encodage binaire 
+                # if st.button('Encodage binaire (One Hot)',key='button_one_hot'):
+                #     encoded_data = pd.get_dummies(data[selected_column], prefix=selected_column)
+                #     data = pd.concat([data, encoded_data], axis=1)
+                #     data = data.drop(selected_column, axis=1)
+                #     st.success(f'Encodage One-Hot de la colonne "{selected_column}" effectué avec succès.')
 
-                if st.button('Remplacer les valeurs'):
-                    if value_to_replace != '' and new_value != '':
-                        data[selected_column] = data[selected_column].replace(value_to_replace, new_value)
-                        st.success(f'Valeurs dans la colonne "{selected_column}" remplacées avec succès.')
-                    else:
-                        st.warning('Veuillez entrer une valeur à remplacer et une nouvelle valeur.')
+                # Bouton pour encodage de variables catégoriques nominales
+                if st.button('Encoder des variables catégoriques nominales',key='button_one_hot_encoder'):
+                    one_hot_encoder = OneHotEncoder(sparse=False, drop='first')
+                    encoded_data = one_hot_encoder.fit_transform(data[[selected_column]])
+                    columns_encoded = [f'{selected_column}_{int(category)}' for category in one_hot_encoder.get_feature_names_out()]
+                    encoded_df = pd.DataFrame(encoded_data, columns=columns_encoded)
+                    data = pd.concat([data, encoded_df], axis=1)
+                    data = data.drop(selected_column, axis=1)
+                    st.success(f'One-Hot Encoder appliqué avec succès sur la colonne "{selected_column}".')
 
-                    st.subheader('Dataframe mis à jour')
-                    st.dataframe(data)
-                    st.session_state["data"] = data
+                # Bouton pour encodage de variables catégoriques ordinales
+                encoder = OrdinalEncoder()
+                if st.button('Encoder des variables catégoriques ordinales',key='button_ordinal_encoder'):
+                    data[selected_column] = encoder.fit_transform(data[[selected_column]])
 
-            
+
+                st.subheader('Dataframe mis à jour')
+                st.dataframe(data)
+                st.session_state["data"] = data
 
 
     else:
