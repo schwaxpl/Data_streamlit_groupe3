@@ -19,40 +19,58 @@ def Encodage_Standardisation():
 
         # Encodage des données
         with st.expander('Encodage'):
-                st.markdown('## Encodage des données')
+            st.markdown('## Encodage des données')
+
+            def detect_categorical_type(series):
+                    unique_values = series.unique()
+                    num_unique = len(unique_values)
+                    num_missing = series.isnull().sum()
+
+                    if num_unique <= 10:  
+                        return 'Nominal'
+                    elif num_unique > 10 and num_missing == 0: 
+                        return 'Ordinal'
+                    else:
+                        return 'Non Categorique'
+                    
+            nb_catcolumn = 0
+            nb_numcolumn = 0
+
+            st.subheader("Column Data Types:")
+            for column_name in data.columns:
+                if data[column_name].dtype == 'object':
+                    nb_catcolumn += 1
+                else:
+                    nb_numcolumn += 1
+
+            st.write(f"The dataset contains {nb_catcolumn} categorical columns and {nb_numcolumn} numerical columns")
+            st.subheader("Data types of each column:")
+            st.write(data.dtypes)
+
+            categorical_columns = [col for col in data.columns if detect_categorical_type(data[col]) == 'Nominal' and data[col].dtype == 'object']
+            selected_categorical_columns = st.multiselect('Sélectionnez les colonnes catégoriques à encoder', categorical_columns, key='selected_categorical_columns')
+
+            encode_button_id = 'encode_button'
+            if st.button('Confirmer l\'encodage', key=encode_button_id):
+                for col in selected_categorical_columns:
+                    encoding_method = 'Ordinal Encoder' if detect_categorical_type(data[col]) == 'Ordinal' else 'One Hot Encoder'
+                    if encoding_method == 'Ordinal Encoder':
+                        encoder = OrdinalEncoder()
+                    else:
+                        encoder = OneHotEncoder(drop='first')
+                    
+                    col_enc = encoder.fit_transform(data[[col]])
+                    encode_df = pd.DataFrame(col_enc.toarray())
+                    for idx, i in enumerate(encode_df.columns):
+                        encode_df.rename(columns={i: encoder.get_feature_names_out()[idx]}, inplace=True)
+                    data = pd.concat([data, encode_df], axis=1)
+                    data = data.drop(columns=col)
+
+                st.success('Colonnes encodées avec succès.')
                 
-                selected_column = st.selectbox('Sélectionnez une colonne:', data.columns, key='key_1_for_selectbox')
-
-                unique_values = data[selected_column].unique()
-                st.write(f"Valeurs uniques dans la colonne '{selected_column}':")
-                st.write(unique_values)
-
-                # Bouton pour encodage binaire 
-                # if st.button('Encodage binaire (One Hot)',key='button_one_hot'):
-                #     encoded_data = pd.get_dummies(data[selected_column], prefix=selected_column)
-                #     data = pd.concat([data, encoded_data], axis=1)
-                #     data = data.drop(selected_column, axis=1)
-                #     st.success(f'Encodage One-Hot de la colonne "{selected_column}" effectué avec succès.')
-
-                # Bouton pour encodage de variables catégoriques nominales
-                if st.button('Encoder des variables catégoriques nominales',key='button_one_hot_encoder'):
-                    one_hot_encoder = OneHotEncoder(sparse=False, drop='first')
-                    encoded_data = one_hot_encoder.fit_transform(data[[selected_column]])
-                    columns_encoded = [f'{selected_column}_{int(category)}' for category in one_hot_encoder.get_feature_names_out()]
-                    encoded_df = pd.DataFrame(encoded_data, columns=columns_encoded)
-                    data = pd.concat([data, encoded_df], axis=1)
-                    data = data.drop(selected_column, axis=1)
-                    st.success(f'One-Hot Encoder appliqué avec succès sur la colonne "{selected_column}".')
-
-                # Bouton pour encodage de variables catégoriques ordinales
-                encoder = OrdinalEncoder()
-                if st.button('Encoder des variables catégoriques ordinales',key='button_ordinal_encoder'):
-                    data[selected_column] = encoder.fit_transform(data[[selected_column]])
-
-
-                st.subheader('Dataframe mis à jour')
-                st.dataframe(data)
-                st.session_state["data"] = data
+            st.subheader('Dataframe mis à jour après l\'encodage')
+            st.dataframe(data)
+            st.session_state["data"] = data
 
         # Standardisation des données
         with st.expander('Standardisation'):
