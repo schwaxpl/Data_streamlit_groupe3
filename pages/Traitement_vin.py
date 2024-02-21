@@ -11,6 +11,10 @@ from sklearn import neighbors
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from sklearn import model_selection
 from sklearn.linear_model import LogisticRegressionCV
+from sklearn.model_selection import cross_val_score, KFold
+
+
+
 u.init_page("Extras")
 
 with st.expander("Traitement pré configuré ""Vin"" "):
@@ -58,7 +62,7 @@ with st.expander("Traitement pré configuré ""Vin"" "):
 
                     type=pd.DataFrame(data.dtypes.value_counts())
                     type.index.name="data type"
-                    st.text("Vos données ont les types suviants :")
+                    st.text("Vos données ont les types suivants :")
                     st.dataframe(type)
             
                     st.text("Matrice de correlation : ")
@@ -125,8 +129,6 @@ with st.expander("Traitement pré configuré ""Vin"" "):
                                             n_jobs=-1) # permet de répartir les calculs sur plusieurs coeurs
                     st.text("Scores sur les 10 splits utilisés : " + str(scores))
                     st.text("Moyenne du score : " + str(mean(scores)))
-
-                    from sklearn.model_selection import cross_val_score, KFold
 
                     st.text("Matrice de confusion : ")
                     predictions = nnGrid.predict(features_all_test)
@@ -238,13 +240,3 @@ with st.expander("Traitement pré configuré ""Vin"" "):
                 st.text("Modèle sauvegardé !")
             else:
                 st.text("Vous devez d'abord importer un fichier")
-
-
-with st.expander("Traitement pré configuré ""Diabète"" "):
-    bt_diab = st.button("Lancer le traitement",key="diabete")
-    if bt_diab:
-        if("data" in st.session_state):
-            data = st.session_state["data"]
-
-        else:
-            st.text("Vous devez d'abord importer un fichier")
