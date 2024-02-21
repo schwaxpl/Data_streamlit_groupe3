@@ -75,7 +75,7 @@ if("data" in st.session_state):
             save_data(data,'Colonnes encodées avec succès.')
             
         st.subheader('Dataframe mis à jour après l\'encodage')
-        st.dataframe(data)
+        st.dataframe(data.head())
 
     # Standardisation des données
     with st.expander('Standardisation'):
@@ -98,7 +98,7 @@ if("data" in st.session_state):
                 save_data(data,f'Colonnes {selected_columns} appliquées avec succès Min-Max Scaling.')
 
         st.subheader('Dataframe mis à jour')
-        st.dataframe(data)
+        st.dataframe(data.head())
 
 else:
     st.text("Bienvenue, allez dans file upload pour charger un CSV")
