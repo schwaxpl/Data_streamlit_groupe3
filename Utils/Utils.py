@@ -52,7 +52,7 @@ def bandeau(page):
 
     with col3:
         choix_col = st.selectbox("Preparation",("", "Encoding & Standardisation"),key="selection3")
-        if(page in ("Encoding & Standardisation")):
+        if(page in ("Encodage_Standardisation")):
             st.write("""<div class='page_actuelle'/>""", unsafe_allow_html=True)
         if(choix_col != ""):
             choix = choix_col
@@ -64,7 +64,7 @@ def bandeau(page):
         if(choix_col != ""):
             choix = choix_col
     with col5:
-        choix_col = st.selectbox("Output",("","Predict", "Import/export modèle"),key="selection5")
+        choix_col = st.selectbox("Sortie",("","Predict", "Import/export modèle"),key="selection5")
         if(page in ("Predict", "Import/export modèle")):
             st.write("""<div class='page_actuelle'/>""", unsafe_allow_html=True)
         if(choix_col != ""):
@@ -80,7 +80,8 @@ def bandeau(page):
             "Nettoyage":"Nettoyage",
             "Import/export modèle":"Model_Files",
             "Entrainement":"Model_training",
-            "Predict":"Predict"
+            "Predict":"Predict",
+            "Encoding & Standardisation":"Encodage_Standardisation"
 
         }
         try:
