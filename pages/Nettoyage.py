@@ -20,7 +20,7 @@ def Nettoyage():
 
             if display_option == 'Afficher toutes les colonnes':
                 st.subheader('Dataframe complet')
-                st.dataframe(data)
+                st.dataframe(data.head())
                 st.session_state["data"] = data
             else:
                 selected_columns = st.multiselect('Sélectionnez les colonnes à afficher', data.columns,key='selected_columns')
@@ -31,7 +31,6 @@ def Nettoyage():
                 else:
                     st.warning('Veuillez sélectionner au moins une colonne.')
 
-            # Onglet Info de la colonne
             list_columns = list(data.columns)
             onglet_info = st.tabs(list_columns)
 
@@ -60,8 +59,23 @@ def Nettoyage():
                 st.success('Opération annulée. Dataframe réinitialisé.')
 
             st.subheader('Dataframe mis à jour')
-            st.dataframe(data)
+            st.dataframe(data.head())
             st.session_state["data"] = data
+
+            # Renommer une colonne 
+            st.markdown('### Renommer des colonnes')
+            selected_column = st.selectbox('Choisissez une colonne à renommer:', st.session_state['data'].columns, key='rename_column_select')
+            new_column_name = st.text_input('Nouveau nom de la colonne:', key='new_column_name_input')
+            if st.button('Changer le nom de la colonne', key='rename_column_button'):
+                if new_column_name:
+                    data.rename(columns={selected_column: new_column_name}, inplace=True)
+                    st.session_state["data"] = data
+                    st.success(f'Nom de la colonne "{selected_column}" changé avec succès en "{new_column_name}".')
+
+
+                st.subheader('Dataframe mis à jour')
+                st.dataframe(data.head())
+                st.session_state["data"] = data
 
        # Imputation / Remplacement des NaN
         with st.expander('Imputation et remplacement des valeurs manquantes'):
@@ -99,7 +113,7 @@ def Nettoyage():
                 st.success('Opération annulée. Dataframe réinitialisé.')
 
             st.subheader('Dataframe mis à jour')
-            st.dataframe(data)
+            st.dataframe(data.head())
             st.session_state["data"] = data
 
 
@@ -118,12 +132,10 @@ def Nettoyage():
 
             selected_column = st.selectbox('Sélectionnez une colonne:', data.columns,key='key_gader_motifs')
  
-            pattern_options = list(set([word.lower() for item in data[selected_column] for word in str(item).split()]))
-            selected_pattern = st.selectbox('Sélectionnez un motif dans les valeurs:', pattern_options)
-            keep_option = st.radio('Choisissez ce qui sera gardé:', ['Avant le motif', 'Après le motif'])
-            apply_to_same_column = st.checkbox('Appliquer la transformation à la même colonne')
-            new_column_name = st.text_input('Nom de la nouvelle colonne (si différent de la colonne d\'origine):', key='text_input_new_column_transform_data')
-            button_id_motifs = f'button_motifs_{selected_column}'
+            selected_pattern = st.text_input('Entrez le motif à rechercher dans les valeurs:', key='key_input_pattern')
+            keep_option = st.radio('Choisissez ce qui sera gardé:', ['Avant le motif', 'Après le motif'], key='key_radio_keep_option')
+            apply_to_same_column = st.checkbox('Appliquer la transformation à la même colonne', key='key_checkbox_apply')
+            new_column_name = st.text_input('Nom de la nouvelle colonne (si différent de la colonne d\'origine):', key='key_text_input_new_column')
 
             def custom_transform(value, selected_pattern, keep_option):
                 if isinstance(value, (str, int, float)):
@@ -135,13 +147,16 @@ def Nettoyage():
                         elif keep_option == 'Après le motif':
                             return ' '.join(words[pattern_index + 1:])
                 return value
+            
+            if st.button('Appliquer la transformation', key='key_button_apply_transform'):
+                if apply_to_same_column or new_column_name:
+                    transformed_column = selected_column if apply_to_same_column else new_column_name
+                    data[transformed_column] = data[selected_column].apply(lambda x: custom_transform(x, selected_pattern, keep_option))
+                    st.subheader(f'Dataframe après transformation: {transformed_column}')
+                    st.dataframe(data.head())
+                else:
+                    st.error("Veuillez fournir un nom pour la nouvelle colonne.")
 
-            if st.button('Garder les motifs',key=button_id_motifs):
-                        if apply_to_same_column:
-                            data[selected_column] = data[selected_column].apply(custom_transform, args=(selected_pattern, keep_option))
-                        else:
-                            new_column_name = new_column_name if new_column_name else selected_column + '_transformed'
-                            data[new_column_name] = data[selected_column].apply(custom_transform, args=(selected_pattern, keep_option))
 
             # Remplacer des valeurs
             st.markdown('### Remplacement de valeurs')
@@ -162,7 +177,7 @@ def Nettoyage():
                     st.warning('Veuillez entrer une valeur à remplacer et une nouvelle valeur.')
 
                 st.subheader('Dataframe mis à jour')
-                st.dataframe(data)
+                st.dataframe(data.head())
                 st.session_state["data"] = data
 
     else:
