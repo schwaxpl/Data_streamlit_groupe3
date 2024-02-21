@@ -41,11 +41,11 @@ with st.expander("Traitement pré configuré ""Vin"" "):
                     st.text("Votre variable taget a "+ str(len(np.unique(data.iloc[:,-1])))+" catégories :")
                     A=pd.DataFrame(data.iloc[:,-1].value_counts())
                     A.rename(columns={A.columns[0]:"quantité par catégorie"})
-                    A.index.name="Catégories dans la varaible cible"
+                    A.index.name="Catégories dans la variable cible"
                     st.dataframe(A)
                     a=np.sum(data.isna()) # pas de na
                     if np.all(a==0):
-                        st.text("Il n'y a pas des données manquantes ! ")
+                        st.text("Il n'y a pas de données manquantes ! ")
                     else:
                         st.text("Il y a ",np.sum(a), "données manquantes",a)
 
@@ -112,7 +112,7 @@ with st.expander("Traitement pré configuré ""Vin"" "):
                 
 
                     st.text("Le taux de bon classement pour KN sur l'échantillon test est " + str(nnGrid.score(features_all_test,activity_all_test)))
-                    st.text("Le taux de bon classement pour KN sur l'échantillon test est " + str(nnGrid.score(features_all_train,activity_all_train)))
+                    st.text("Le taux de bon classement pour KN sur l'échantillon d'entrainement est " + str(nnGrid.score(features_all_train,activity_all_train)))
                 
                 with st.spinner("Veuillez Les résultats sur les 10 splits utilisés :"):
                 

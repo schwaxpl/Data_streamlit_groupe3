@@ -48,19 +48,20 @@ if("data" in st.session_state):
         X = data.drop("target",axis=1)
         if("train_test" in st.session_state):
             X_train, X_test, y_train, y_test = st.session_state["train_test"][0],st.session_state["train_test"][1],st.session_state["train_test"][2],st.session_state["train_test"][3]
-            with st.expander("Données",True):
-                st.text("La colonne target contient "+str(data["target"].value_counts().count())+" valeurs différentes, voici le top 5:")
-                st.dataframe(data["target"].value_counts().head())
-                st.text("Le jeu de données contient "+str(data["target"].count()) + " lignes")
-                split = st.slider("Split Train / Test",0,100,33,1)
-                generer_split = st.button("Découper")
+        with st.expander("Données",True):
+            st.text("La colonne target contient "+str(data["target"].value_counts().count())+" valeurs différentes, voici le top 5:")
+            st.dataframe(data["target"].value_counts().head())
+            st.text("Le jeu de données contient "+str(data["target"].count()) + " lignes")
+            split = st.slider("Split Train / Test",0,100,33,1)
+            generer_split = st.button("Découper")
 
-                #Génération du split si le bouton a été utilisé
-                if(generer_split):
-                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=split/100.0, random_state=42)
-                    st.text(str(len(X_train)) + " lignes d'entrainement")
-                    st.text(str(len(X_test)) + " lignes de test")
-                    st.session_state["train_test"] = (X_train, X_test, y_train, y_test) 
+            #Génération du split si le bouton a été utilisé
+            if(generer_split):
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=split/100.0, random_state=42)
+                st.text(str(len(X_train)) + " lignes d'entrainement")
+                st.text(str(len(X_test)) + " lignes de test")
+                st.success("Split initialisé")
+                st.session_state["train_test"] = (X_train, X_test, y_train, y_test) 
 
     with st.expander("Modèle"):
         #as-t-on créé un split personnalisé ? sinon on va en initialiser un
