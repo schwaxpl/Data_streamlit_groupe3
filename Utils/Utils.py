@@ -3,17 +3,22 @@ import pandas as pd
 from streamlit_extras.switch_page_button import switch_page
 
 def init_page(page):
-    st.set_page_config(layout="wide")
+    st.set_page_config(page_title="Projet ML Groupe 3 Diginamic",layout="wide",page_icon="random")    
+    st.header('Projet streamlit groupe 3')
     st.write('''<style>[data-testid="stHorizontalBlock"] [data-testid="column"]:has(div.page_actuelle) p {color: #bbff00;font-weight:bold;}</style>''', unsafe_allow_html=True)
     bandeau(page)
-
-    
+    txt_infos = ""
     if("data" in st.session_state and "nom_dataset" in st.session_state):
         nom_dataset = st.session_state["nom_dataset"]
-        st.text("📄 Vous travaillez actuellement sur le dataset " + str(nom_dataset) )
+        
+        txt_infos +="📄 dataset " + str(nom_dataset) 
     if("model" in st.session_state):
-        st.text("⚙️ Vous avez un modèle de type "+ str(type(st.session_state["model"]).__name__) +" en cours d'utilisation")
-
+        txt_infos += " ⚙️ Modèle "+ str(type(st.session_state["model"]).__name__) +""
+    if("train_test" in st.session_state):
+        X_train, X_test, y_train, y_test = st.session_state["train_test"][0],st.session_state["train_test"][1],st.session_state["train_test"][2],st.session_state["train_test"][3]
+        txt_infos += " 🧪 Split " + str(len(y_train)) + "/" + str(len(y_test))
+    if txt_infos != "":
+        st.text(txt_infos)
 
 def reset_select():
     st.session_state.selection1 = ""
@@ -53,7 +58,7 @@ def bandeau(page):
             choix = choix_col
 
     with col4:
-        choix_col = st.selectbox("Création modèle",("","Entrainement","Model Evaluation","Model Tuning"),key="selection4")
+        choix_col = st.selectbox("Création modèle",("","Entrainement"),key="selection4")
         if(page in ("Entrainement","Model Evaluation","Model Tuning")):
             st.write("""<div class='page_actuelle'/>""", unsafe_allow_html=True)
         if(choix_col != ""):
@@ -74,7 +79,8 @@ def bandeau(page):
             "Statistiques":"Statistiques_generales",
             "Nettoyage":"Nettoyage",
             "Import/export modèle":"Model_IO",
-            "Entrainement":"Model_training"
+            "Entrainement":"Model_training",
+            "Predict":"Predict"
 
         }
         try:

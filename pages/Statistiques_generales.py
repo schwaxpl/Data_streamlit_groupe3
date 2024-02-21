@@ -3,9 +3,6 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-import Utils.Utils as u
-
-u.init_page("Statistiques")
 
 nb_catcolumn=0
 nb_numcolumn=0
@@ -39,16 +36,20 @@ if("data" in st.session_state):
             sns.heatmap(data.corr(), ax=ax,)
             st.write(fig)
 
-    # with st.expander("Pairplot visualization"):
-    #     st.dataframe(sns.pairplot(data))
+    with st.expander("Pairplot visualization"):
+        st.pyplot(sns.pairplot(data,hue="target"))
     
     with st.expander("Représentation des données par histogramme"):
-        fig, ax = plt.subplots(figsize=(20, 14))
-        sns.histplot(data, ax=ax)  #seaborn's histplot 
-        st.pyplot(fig)
+        fig, ax = plt.subplots()
+        data.hist(figsize=(20, 20))
+        st.write(fig)
+      
     
     with st.expander("Description des données"):
         st.dataframe(data.describe())
+
+    with st.expander("Informations"):
+        st.dataframe(data.info())
 
     with st.expander("Usage mémoire"):
         st.dataframe(data.memory_usage())
