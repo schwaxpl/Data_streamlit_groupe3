@@ -3,6 +3,11 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+import itertools
+
+import Utils.Utils as u
+
+u.init_page("Statistiques")
 
 nb_catcolumn=0
 nb_numcolumn=0
@@ -36,20 +41,46 @@ if("data" in st.session_state):
             sns.heatmap(data.corr(), ax=ax,)
             st.write(fig)
 
-    with st.expander("Pairplot visualization"):
-        st.pyplot(sns.pairplot(data,hue="target"))
-    
-    with st.expander("Représentation des données par histogramme"):
-        fig, ax = plt.subplots()
-        data.hist(figsize=(20, 20))
-        st.write(fig)
-      
+    with st.expander("Visualization de données"):
+        pplot= st.button("Exploration des données Pairplot")
+        histoplot= st.button("Représentation des données par histogramme")
+        
+        if pplot or histoplot:
+            st.subheader("Visualization")
+            if pplot:
+                if("data" in st.session_state):
+                    data = st.session_state["data"]
+                    st.title('Pairplot de chacune des variables')
+                    for column_x in data.columns:
+                        if column_x != 'target':
+                            for column_y in data.columns:
+                                if column_y != 'target' and column_x != column_y:
+                                    st.write(f'Pairplot for variables {column_x} and {column_y}')
+                                    pairplot = sns.pairplot(data, x_vars=column_x, y_vars=column_y, hue="target")
+                                    st.pyplot(pairplot.fig)
+
+
+                    st.pyplot(sns.pairplot(data,hue="target"))
+            if histoplot:
+                if("data" in st.session_state):
+                    data = st.session_state["data"]
+                    st.title('Histogrammes de chacune des variables')
+                    for column in data.columns:
+                        if column != 'target':  
+                            st.write(f'Histogramme de la variable {column}')
+                            fig, ax = plt.subplots(figsize=(6, 6))
+                            data[column].hist(bins=25, ax=ax)
+                            ax.set_xlabel(column)
+                            ax.set_ylabel('Fréquence')
+                            st.pyplot(fig)
     
     with st.expander("Description des données"):
         st.dataframe(data.describe())
 
     with st.expander("Informations"):
-        st.dataframe(data.info())
+        if("data" in st.session_state):
+            data = st.session_state["data"]
+            st.write(data.info())
 
     with st.expander("Usage mémoire"):
         st.dataframe(data.memory_usage())
