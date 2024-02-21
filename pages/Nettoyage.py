@@ -51,7 +51,7 @@ if("data" in st.session_state):
                 st.text(f'Nombre de valeurs uniques : {data[col_name].nunique()}')
 
     # Choix des colonnes
-    with st.expander('Choix des colonnes'):
+    with st.expander('Choix et Renommage des colonnes'):
         st.markdown('## Choix des colonnes')
         columns_to_drop = st.multiselect('Sélectionnez les colonnes inutiles à supprimer', data.columns,key='columns_to_drop')
 
@@ -134,8 +134,7 @@ if("data" in st.session_state):
         # Garder des motifs dans les valeurs
         st.markdown('### Garder des motifs dans les valeurs')
         st.subheader('Dataframe original')
-        st.dataframe(data)
-        st.session_state["data"] = data
+        st.dataframe(data.head())
 
         selected_column = st.selectbox('Sélectionnez une colonne:', data.columns,key='key_gader_motifs')
 
