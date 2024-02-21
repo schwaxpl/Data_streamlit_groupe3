@@ -4,3 +4,7 @@ Pages/__pycache__/
 *.pyc
 
 model.pkl
+
+*.json
+
+.vscode/spellright.dict
