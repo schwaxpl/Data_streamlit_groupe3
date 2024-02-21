@@ -36,7 +36,7 @@ if("data" in st.session_state):
     #Est-ce qu'on a une colonne target ? Sinon on propose de la créer
     if not "target" in data.columns:
         st.warning("Pas de colonne ""target"" dans les données vous devriez sélectionner une colonne pour la transformer en target, sinon il sera impossible de continuer")
-        col_target = st.selectbox("Selectionnez la target",data.columns)
+        col_target = st.selectbox("Sélectionnez la target",data.columns)
         bt_target = st.button("Transformer en colonne Target")
         if(bt_target):
             data["target"] = data[col_target]
@@ -126,14 +126,14 @@ if("data" in st.session_state):
                     st.text(str(len(X_test)) + " lignes de test")
                 else:
                     st.text("Le jeu de données de test personnalisé a été utilisé")
-                if(algo == "K Nearest Neighbours"):
+                if(algo == "K Nearest Neighbors"):
                     txt_voisins = st.text_input("Nombre de voisins")
                 bt_trainc = st.button("Entrainer le modèle",key="bt_trainc")
                 if bt_trainc:
                     if algo == "Régression Logistique":
                         st.subheader("Génération du modèle Regression Logistique")
                         model = LogisticRegression()
-                    if algo == "K Nearest Neighbours":
+                    if algo == "K Nearest Neighbors":
                         st.subheader("Génération du modèle KNN")
                         if str(txt_voisins).isdigit():
                             nb_voisins = int(txt_voisins)

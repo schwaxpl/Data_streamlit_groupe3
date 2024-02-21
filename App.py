@@ -3,9 +3,7 @@ import pandas as pd
 import numpy as np
 from Utils import Utils as u
 
-u.init_page("pouet")
-
-st.title('Projet streamlit groupe 3')
+u.init_page("Main")
 
 if("data" in st.session_state):
     data = st.session_state["data"]

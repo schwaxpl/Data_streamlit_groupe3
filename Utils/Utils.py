@@ -74,11 +74,11 @@ def bandeau(page):
         st.session_state.reset_select = True
 
         MATCH = {
-            'Import': "File_upload",
+            'Import': "Import_Data",
             'Export': "Export_Data",
             "Statistiques":"Statistiques_generales",
             "Nettoyage":"Nettoyage",
-            "Import/export modèle":"Model_IO",
+            "Import/export modèle":"Model_Files",
             "Entrainement":"Model_training",
             "Predict":"Predict"
 

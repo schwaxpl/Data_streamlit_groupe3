@@ -11,11 +11,15 @@ from sklearn import neighbors
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from sklearn import model_selection
 from sklearn.linear_model import LogisticRegressionCV
+from sklearn.model_selection import cross_val_score, KFold
+
+
+
 u.init_page("Extras")
 
 with st.expander("Traitement pré configuré ""Vin"" "):
     bt_explo = st.button("Exploration des données pour classification")
-    bt_vin = st.button("Générer un modèle KNearest Neighbours",key="vin")
+    bt_vin = st.button("Générer un modèle KNearest Neighbors",key="vin")
     bt_vin2 = st.button("Générer un modèle de regression linéaire",key="vin2")
     bt_vin3 = st.button("Générer un modèle SVC",key="vin3")
 
@@ -30,7 +34,7 @@ with st.expander("Traitement pré configuré ""Vin"" "):
         st.text("Vous devez d'abord importer un fichier")
 
     if bt_explo or bt_vin or bt_vin2 or bt_vin3:
-        st.subheader("Resultats")
+        st.subheader("Résultats")
         if bt_explo:
             if("data" in st.session_state):
      
@@ -49,7 +53,7 @@ with st.expander("Traitement pré configuré ""Vin"" "):
                     else:
                         st.text("Il y a ",np.sum(a), "données manquantes",a)
 
-                    z=np.where(data.duplicated())[0] # Pas de lignes duplicées 
+                    z=np.where(data.duplicated())[0] # Pas de lignes dupliquées 
 
                     if z==0:
                         st.text("Il n'y a pas des lignes dupliquées ! ")
@@ -58,7 +62,7 @@ with st.expander("Traitement pré configuré ""Vin"" "):
 
                     type=pd.DataFrame(data.dtypes.value_counts())
                     type.index.name="data type"
-                    st.text("Vos données ont les types suviants :")
+                    st.text("Vos données ont les types suivants :")
                     st.dataframe(type)
             
                     st.text("Matrice de correlation : ")
@@ -95,7 +99,7 @@ with st.expander("Traitement pré configuré ""Vin"" "):
                     features_all_train, features_all_test, activity_all_train, activity_all_test = model_selection.train_test_split(X,Y,train_size=0.7,random_state=42)
                     from sklearn.model_selection import GridSearchCV
                     st.text("On va tester un nombre de voisins compris entre 2 et 20")
-                    # la grille de parametres a regler sont definis dans un dictionnaire (dict)
+                    # la grille de paramètres a régler sont definis dans un dictionnaire (dict)
                     tuned_parameters = {'n_neighbors': range(2,20)}
 
                     my_kfold = model_selection.KFold(n_splits=10, shuffle=True, random_state=0)
@@ -104,7 +108,7 @@ with st.expander("Traitement pré configuré ""Vin"" "):
                                         cv=5)
                     nnGrid.fit(features_all_train, activity_all_train)
 
-                    # le meilleur modele 
+                    # le meilleur modèle 
                     st.text('On choisit de conserver ' + str( nnGrid.best_params_['n_neighbors'])+ ' voisins.')
                     st.text("On a obtenu le meilleur score de " + str( nnGrid.best_score_) + " avec ce paramètres")
 
@@ -122,11 +126,9 @@ with st.expander("Traitement pré configuré ""Vin"" "):
                                             X=X,
                                             y=Y,
                                             cv=my_kfold,
-                                            n_jobs=-1) # permet de répartir les calculs sur plusieurs coeurs
+                                            n_jobs=-1) # permet de répartir les calculs sur plusieurs cœurs
                     st.text("Scores sur les 10 splits utilisés : " + str(scores))
                     st.text("Moyenne du score : " + str(mean(scores)))
-
-                    from sklearn.model_selection import cross_val_score, KFold
 
                     st.text("Matrice de confusion : ")
                     predictions = nnGrid.predict(features_all_test)
@@ -165,7 +167,7 @@ with st.expander("Traitement pré configuré ""Vin"" "):
                 svcgrid.fit(features_all_train,activity_all_train)
                 svc_pred=svcgrid.best_estimator_.predict(features_all_test)
 
-                st.write("le score du prédiction sur l'échentillon  test avec les paramètres du GridsearchCV est : ",svcgrid.best_estimator_.score(features_all_test,activity_all_test))
+                st.write("le score du prédiction sur l'échantillon  test avec les paramètres du GridsearchCV est : ",svcgrid.best_estimator_.score(features_all_test,activity_all_test))
 
                 scores = model_selection.cross_val_score(estimator=svcgrid.best_estimator_,
                         X=X,
@@ -238,13 +240,3 @@ with st.expander("Traitement pré configuré ""Vin"" "):
                 st.text("Modèle sauvegardé !")
             else:
                 st.text("Vous devez d'abord importer un fichier")
-
-
-with st.expander("Traitement pré configuré ""Diabète"" "):
-    bt_diab = st.button("Lancer le traitement",key="diabete")
-    if bt_diab:
-        if("data" in st.session_state):
-            data = st.session_state["data"]
-
-        else:
-            st.text("Vous devez d'abord importer un fichier")

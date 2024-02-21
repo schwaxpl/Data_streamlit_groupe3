@@ -13,7 +13,7 @@ file = st.file_uploader(label="Mettez votre modèle",type="pkl",accept_multiple_
 
 if file:
     model = joblib.load(file)
-    st.text("Modele chargé avec succès !")
+    st.text("Modèle chargé avec succès !")
     st.session_state["model"] = model
 
 if "model" in st.session_state:
