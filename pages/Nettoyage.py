@@ -18,6 +18,7 @@ u.init_page("Nettoyage")
 st.title('Nettoyage des données')
 if msg != '':
     st.success(msg)
+    del st.session_state["clean_message"]
 
 if("data" in st.session_state):
     data = st.session_state["data"]
