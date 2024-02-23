@@ -84,16 +84,19 @@ if("data" in st.session_state):
                         st.text(str(len(X_test)) + " lignes de test")
                 else:
                     st.text("Le jeu de données de test personnalisé a été utilisé")
+                if algo == "Régression Lasso" or algo == "Régression Ridge":
+                    # Sidebar for hyperparameter selection
+                    alpha = st.slider("Alpha (Force de régularisation)", 0.0, 1.0, 0.5, 0.01)
 
                 bt_trainr = st.button("Entrainer le modèle",key="bt_trainr")
                 if bt_trainr:
                     st.subheader("Génération du modèle " + algo)
                     if algo == "Régression Lasso":
-                        model = Lasso()
+                        model = Lasso(alpha=alpha)
                     if algo == "Régression":
                         model = LinearRegression()
                     if algo == "Régression Ridge":
-                        model = Ridge()
+                        model = Ridge(alpha=alpha)
                     if algo == "ElasticNet":
                         model = ElasticNet()
                     if algo =="SVR":
@@ -126,14 +129,18 @@ if("data" in st.session_state):
                     st.text(str(len(X_test)) + " lignes de test")
                 else:
                     st.text("Le jeu de données de test personnalisé a été utilisé")
-                if(algo == "K Nearest Neighbors"):
+                if(algo == "K Nearest Neighbours"):
                     txt_voisins = st.text_input("Nombre de voisins")
+                if(algo == "SVC"):
+                    C = st.slider("C (Regularization parameter)", 0.1, 10.0, 1.0, 0.1)
+                    kernel = st.selectbox("Kernel", ["linear", "poly", "rbf", "sigmoid"])
+
                 bt_trainc = st.button("Entrainer le modèle",key="bt_trainc")
                 if bt_trainc:
                     if algo == "Régression Logistique":
                         st.subheader("Génération du modèle Regression Logistique")
                         model = LogisticRegression()
-                    if algo == "K Nearest Neighbors":
+                    if algo == "K Nearest Neighbours":
                         st.subheader("Génération du modèle KNN")
                         if str(txt_voisins).isdigit():
                             nb_voisins = int(txt_voisins)
@@ -148,7 +155,7 @@ if("data" in st.session_state):
                         model = neighbors.KNeighborsClassifier(n_neighbors = nb_voisins)
                     if algo == "SVC":
                         st.subheader("Génération du modèle SVC")
-                        model = SVC(kernel='linear')
+                        model = SVC(kernel=kernel,C=C)
                     with st.spinner("Veuillez patienter pendant l'entrainement du modèle"):
                         
 

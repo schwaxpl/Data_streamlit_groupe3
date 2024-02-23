@@ -10,7 +10,6 @@ def init_page(page):
     txt_infos = ""
     if("data" in st.session_state and "nom_dataset" in st.session_state):
         nom_dataset = st.session_state["nom_dataset"]
-        
         txt_infos +="📄 dataset " + str(nom_dataset) 
     if("model" in st.session_state):
         txt_infos += " ⚙️ Modèle "+ str(type(st.session_state["model"]).__name__) +""
@@ -19,6 +18,13 @@ def init_page(page):
         txt_infos += " 🧪 Split " + str(len(y_train)) + "/" + str(len(y_test))
     if txt_infos != "":
         st.text(txt_infos)
+
+def get_model_name():
+    if "model" in st.session_state:
+        model_name = str(type(st.session_state["model"]).__name__)
+    else:
+        model_name = "Inconnu"
+    return model_name
 
 def reset_select():
     st.session_state.selection1 = ""

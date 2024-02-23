@@ -3,12 +3,15 @@ import pandas as pd
 import Utils.Utils as u
 import joblib
 import io
-
+import time as t
 u.init_page("Import/export modèle")
-@st.cache_data
+
 def convert_mod(_model_to_dump):
-    joblib.dump(_model_to_dump,"model.pkl")
-    
+    fname=""
+    with open("model"+u.get_model_name()+".pkl","wb") as file2:
+        joblib.dump(_model_to_dump,file2)
+        fname = file2.name
+    return fname
 file = st.file_uploader(label="Mettez votre modèle",type="pkl",accept_multiple_files=False)
 
 if file:
@@ -19,14 +22,14 @@ if file:
 if "model" in st.session_state:
     model = st.session_state["model"]
 
-    convert_mod(model)
+    filename = convert_mod(model)
 
-    with open("model.pkl", "rb") as file:
-        model_bytes = file.read()
+    with open(filename, "rb") as file3:
+        model_bytes = file3.read()
         st.download_button(
-        "Télécharger le modèle",
+        "Télécharger le modèle " + u.get_model_name(),
         model_bytes,
-        "Model.pkl",
+        file3.name + str(t.time()),
         mime="application/octet-stream",
-        key='download-pkl'
+        key='download-pkl'+u.get_model_name()+str(t.time())
         )

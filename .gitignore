@@ -8,3 +8,5 @@ model.pkl
 *.json
 
 .vscode/spellright.dict
+
+*.pkl
